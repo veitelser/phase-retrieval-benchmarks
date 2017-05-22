@@ -30,7 +30,7 @@ resultfile:	ASCII file of the iteration counts for each trial
 
 Example:
 	
-	./alg1 data100E 800 .95 .5 1000 5 results100E &
+	./alg1 data/data100E 800 .95 .5 1000 5 results100E &
 	
 Solutions are written to a file named sol (M x M table of floats).
 
