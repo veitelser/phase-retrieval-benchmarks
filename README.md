@@ -1,19 +1,19 @@
 ## phase retrieval benchmarks
-### Algorithm 1: Simple Phase Retrieval
+### RRR: Simple Phase Retrieval
 This program is deliberately minimalist so as not to obscure the structure of the algorithm.
 It needs the [FFTW3 library](http://www.fftw.org).
 
 The program is set up for solving the benchmarks described in:
-> "Benchmark problems for phase retrieval", V. Elser & T.-Y. Lan
+> "Benchmark problems for phase retrieval", V. Elser, T.-Y. Lan & T. Bendory
 
 To compile:
 ```
-gcc -O2 alg1.c -lm -lfftw3 -o alg1
+gcc -O2 RRR.c -lm -lfftw3 -o RRR
 ```
 
 To run:
 ```
-./alg1 [datafile] [supp] [powgoal] [beta] [iterlimit] [trials] [resultfile] &
+./RRR [datafile] [supp] [powgoal] [beta] [iterlimit] [trials] [resultfile] &
 ```
 
 - datafile:	one of the benchmark datafiles (data/data100E, data/data140E, ...)
@@ -26,7 +26,7 @@ To run:
 
 Example:
 ```
-./alg1 data/data100E 800 .95 .5 1000 5 results100E &
+./RRR data/data100E 800 .95 .5 1000 5 results100E &
 ```
 
 Solutions are written to a file named sol (M x M table of floats).

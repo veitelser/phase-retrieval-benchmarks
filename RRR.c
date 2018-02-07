@@ -1,25 +1,25 @@
 /*
 -----------------------------------
-Algorithm 1: Simple Phase Retrieval
+RRR: Simple Phase Retrieval
 -----------------------------------
 
 This program is deliberately minimalist so as not to obscure
 the structure of the algorithm. It needs the FFTW3 library:
 
 	http://www.fftw.org
-	
+
 The program is set up for solving the benchmarks described in:
 
-	"Benchmark problems for phase retrieval", V. Elser & T.-Y. Lan
-	
+	"Benchmark problems for phase retrieval", V. Elser, T.-Y. Lan & T. Bendory
+
 To compile:
 
-	gcc -O2 alg1.c -lm -lfftw3 -o alg1
-	
+	gcc -O2 RRR.c -lm -lfftw3 -o RRR
+
 To run:
 
-	./alg1 [datafile] [supp] [powgoal] [beta] [iterlimit] [trials] [resultfile] &
-	 
+	./RRR [datafile] [supp] [powgoal] [beta] [iterlimit] [trials] [resultfile] &
+
 datafile:	one of the benchmark datafiles (data100E, data140E, ...)
 supp:		support size = 8*N, N = 100, 140, ... is the number of atoms
 powgoal:	fractional power in support
@@ -29,9 +29,9 @@ trials:		number of random starts
 resultfile:	ASCII file of the iteration counts for each trial
 
 Example:
-	
-	./alg1 data/data100E 800 .95 .5 1000 5 results100E &
-	
+
+	./RRR data/data100E 800 .95 .5 1000 5 results100E &
+
 Solutions are written to a file named sol (M x M table of floats).
 
 */
@@ -52,7 +52,7 @@ double complex f2[M*(M/2+1)];
 double beta,solf0,solpow;
 int supp,datapow;
 
-fftw_plan forward_plan,backward_plan; 
+fftw_plan forward_plan,backward_plan;
 
 
 // FFTW setup for 2D transforms
@@ -77,22 +77,22 @@ k=0;
 
 for(i=0;i<M;++i)
 	{
-	fscanf(fp,"%d",&data); 
+	fscanf(fp,"%d",&data);
 	datapow+=data;
-	
+
 	fmag[k++]=sqrt((double)data)/M;
-	
+
 	for(j=1;j<M/2;++j)
 		{
 		fscanf(fp,"%d",&data);
 		datapow+=2*data;
-		
+
 		fmag[k++]=sqrt((double)data)/M;
 		}
-		
+
 	fmag[k++]=.0;
 	}
-	
+
 fclose(fp);
 }
 
@@ -109,11 +109,11 @@ for(p=q=0;p<len-1;++p)
 	{
 	if(val[p]<val[len-1])
 		continue;
-		
+
 	SWAP(p,q);
 	++q;
 	}
-	
+
 SWAP(q,len-1);
 
 return q==rank ? val[q] : q>rank ? qselect(val,q,rank) : qselect(val+q,len-q,rank-q);
@@ -128,7 +128,7 @@ double low;
 
 for(k=0;k<M*M;++k)
 	v[k]=xin[k];
-	
+
 low=qselect(v,M*M,supp);
 
 // also set to zero any negative values in support
@@ -149,7 +149,7 @@ void proj2()
 {
 int k;
 double f2mag;
-	
+
 // x2 -> f2
 fftw_execute(forward_plan);
 
@@ -172,8 +172,8 @@ for(k=1;k<M*(M/2+1);++k)
 // f2 -> x2
 fftw_execute(backward_plan);
 }
-		
-// relaxed-reflect-reflect (RRR) iteration		
+
+// relaxed-reflect-reflect (RRR) iteration
 void RRR()
 {
 int k;
@@ -182,7 +182,7 @@ proj1(x);
 
 for(k=0;k<M*M;++k)
 	x2[k]=2.*x1[k]-x[k];
-	
+
 proj2();
 
 // solf0 is the [0] Fourier coefficient of the candidate solution
@@ -193,7 +193,7 @@ solpow=.0;
 for(k=0;k<M*M;++k)
 	{
 	x[k]+=beta*(x2[k]-x1[k]);
-	
+
 	// support of candidate solution x2 is defined by positive values of x1
 	// x2 is synthesized from data magnitudes
 	if(x1[k]>.0)
@@ -202,10 +202,10 @@ for(k=0;k<M*M;++k)
 		solpow+=x2[k]*x2[k];
 		}
 	}
-	
+
 solf0/=M;
 }
-		
+
 // initialize x
 void init()
 {
@@ -236,11 +236,11 @@ for(i=0;i<M;++i)
 		fprintf(fp,"%12.6f",x2[i*M+j]);
 	fprintf(fp,"\n");
 	}
-	
+
 fclose(fp);
 }
 
-	
+
 int main(int argc,char* argv[])
 {
 char *datafile,*resultfile;
@@ -266,8 +266,8 @@ else
 	fprintf(stderr,"expected seven arguments: datafile, supp, powgoal, beta, iterlimit, trials, resultfile\n");
 	return 1;
 	}
-	
-getdata(datafile);	
+
+getdata(datafile);
 setup();
 
 fp=fopen(resultfile,"w");
@@ -286,48 +286,48 @@ for(try=1;try<=trials;++try)
 	{
 	// randomly initialize for each trial
 	init();
-	
+
 	for(iter=0;iter<iterlimit;++iter)
 		{
 		RRR();
-	
+
 		// solf0 and solpow are computed in RRR()
 		pow=solpow/(solf0*solf0+datapow);
-	
+
 		// terminate iterations and record results when power criterion is satisfied
 		if(pow>powgoal)
 			{
 			printsol();
-			
+
 			fp=fopen(resultfile,"a");
 			fprintf(fp,"%5d%14lld\n",try,iter);
 			fclose(fp);
-			
+
 			++succ;
 			itercount+=iter;
-			
+
 			goto next;
 			}
 		}
-		
+
 	fp=fopen(resultfile,"a");
 	fprintf(fp,"%5d%14d\n",try,-1);
 	fclose(fp);
-	
+
 	itercount+=iterlimit;
-	
+
 	next:;
 	}
-	
+
 elapsed=((double)(clock()-start))/CLOCKS_PER_SEC;
-	
+
 fp=fopen(resultfile,"a");
 
 if(succ)
 	fprintf(fp,"\niterations per solution: %f\n",((double)itercount)/succ);
 else
 	fprintf(fp,"\nno solutions found\n");
-	
+
 fprintf(fp,"\niterations per sec: %f\n",((double)itercount)/elapsed);
 
 fclose(fp);
