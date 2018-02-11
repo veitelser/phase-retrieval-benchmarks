@@ -1,0 +1,6 @@
+The matlab code to implement the 2D phase retrieval of the coded diffraction pattern (CDP) problem using the RRR algorithm.
+To run the code, execute the following command in terminal:
+    
+    octave cdp.m
+
+or run the script octave cdp.m in matlab.
