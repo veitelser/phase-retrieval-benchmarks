@@ -1,6 +1,6 @@
 L = 3 ;
-stanford = double(imread("stanford.jpg")) ;
-cornell = double(imread("cornell.jpg")) ;
+stanford = double(imread('stanford.jpg')) ;
+cornell = double(imread('cornell.jpg')) ;
 height = size(cornell, 1) ;
 width = size(cornell, 2) ;
 
