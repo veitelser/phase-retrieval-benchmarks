@@ -52,7 +52,7 @@ function RRR_cdp_image(b, y, sol, D)
                 norm1 = norm1 + norm(x_c - x_cur*sign(x_cur'*x_c))^2 ;
                 norm2 = norm2 + norm(x_c)^2 ;
             end
-            filename = ["reconst-cornell-iter", int2str(iter), ".jpg"] ;
+            filename = ['reconst-cornell-iter', int2str(iter), '.jpg'] ;
             cur_img = uint8(round(abs(cur_sol))) ;
             imwrite(cur_img, filename) ;
             err_val = sqrt(norm1/norm2) ;
