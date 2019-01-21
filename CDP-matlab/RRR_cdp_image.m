@@ -49,8 +49,8 @@ function RRR_cdp_image(b, y, sol, D)
                 p1 = proj1(D, inv_diag, y_c, L, height, width) ;
                 cur_sol(:, :, c) = Ainv(D, inv_diag, p1, L, height, width) ;
                 x_cur = reshape(squeeze(cur_sol(:, :, c)), height*width, 1) ;
-                norm1 += norm(x_c - x_cur*sign(x_cur'*x_c))^2 ;
-                norm2 += norm(x_c)^2 ;
+                norm1 = norm1 + norm(x_c - x_cur*sign(x_cur'*x_c))^2 ;
+                norm2 = norm2 + norm(x_c)^2 ;
             end
             filename = ["reconst-cornell-iter", int2str(iter), ".jpg"] ;
             cur_img = uint8(round(abs(cur_sol))) ;
