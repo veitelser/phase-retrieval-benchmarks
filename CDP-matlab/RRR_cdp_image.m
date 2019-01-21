@@ -13,7 +13,7 @@ function RRR_cdp_image(b, y, sol, D)
     for i = 1:L
         for j = 1:height
             for k = 1:width
-                inv_diag(j, k) += abs(D(i, j, k))^2 ;
+                inv_diag(j, k) = inv_diag(j, k) + abs(D(i, j, k))^2 ;
             end
         end
     end
@@ -32,10 +32,10 @@ function RRR_cdp_image(b, y, sol, D)
             p2 = proj2(b_c, 2*p1 - y_c) ;
             delta_y = p2 - p1 ;
             for k = 1:L
-                rms_diff += norm(squeeze(delta_y(k, :, :)))^2 ;
-                norm_y += norm(squeeze(y_c(k, :, :)))^2 ;
+                rms_diff = rms_diff + norm(squeeze(delta_y(k, :, :)))^2 ;
+                norm_y = norm_y + norm(squeeze(y_c(k, :, :)))^2 ;
             end
-            y_c += beta*delta_y ;
+            y_c = y_c + beta*delta_y ;
             y(:, :, :, c) = y_c ;
         end
 
@@ -76,7 +76,7 @@ end
 function x1 = Ainv(D, inv_diag, y, L, height, width)
     x1 = zeros(height, width) ;
     for l = 1:L
-        x1 += squeeze(conj(D(l, :, :))) .* ifft2(squeeze(y(l, :, :))) ;
+        x1 = x1 + squeeze(conj(D(l, :, :))) .* ifft2(squeeze(y(l, :, :))) ;
     end
     x1 = x1 .* inv_diag ;
 end
